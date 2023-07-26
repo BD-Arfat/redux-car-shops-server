@@ -96,16 +96,16 @@ async function run() {
 
             const user = req.body;
             const orderService = await productCollection.findOne({ _id: new ObjectId(user.service) });
-            //  (orderService);
+            // console.log(orderService);
 
             const transactionId = new ObjectId().toString();
             const data = {
                 total_amount: orderService.price,
                 currency: user.currency,
                 tran_id: transactionId, // use unique tran_id for each api call
-                success_url: `http://localhost:5000/order/success?transactionId=${transactionId}`,
-                fail_url: `http://localhost:5000/order/fail?transactionId=${transactionId}`,
-                cancel_url: 'http://localhost:5000/order/cancel',
+                success_url: `https://car-shops-server-bd-arfat.vercel.app/order/success?transactionId=${transactionId}`,
+                fail_url: `https://car-shops-server-bd-arfat.vercel.app/order/fail?transactionId=${transactionId}`,
+                cancel_url: 'https://car-shops-server-bd-arfat.vercel.app/order/cancel',
                 ipn_url: 'http://localhost:3030/ipn',
                 shipping_method: 'Courier',
                 product_name: user.name,
@@ -135,7 +135,7 @@ async function run() {
             sslcz.init(data).then(apiResponse => {
                 // Redirect the user to payment gateway
                 let GatewayPageURL = apiResponse.GatewayPageURL
-                //  (apiResponse)
+                // console.log(apiResponse)
                 ordersCollection.insertOne({
                     ...user,
                     price: orderService.price,
@@ -150,10 +150,10 @@ async function run() {
         app.post('/order/success', async (req, res) => {
             const { transactionId } = req.query;
             const result = await ordersCollection.updateOne({ transactionId }, { $set: { paid: true, paidAt: new Date() } });
-             (result)
+            console.log(result)
 
             if (result.modifiedCount > 0) {
-                res.redirect(`http://localhost:3000/order/success?transactionId=${transactionId}`)
+                res.redirect(`https://car-shops-3-6011c.web.app/order/success?transactionId=${transactionId}`)
             }
 
         });
@@ -168,7 +168,7 @@ async function run() {
             const { transactionId } = req.query; 
             const result = await ordersCollection.deleteOne({ transactionId },);
             if(result.deletedCount){
-                res.redirect(`http://localhost:3000/order/fail`)
+                res.redirect(`https://car-shops-3-6011c.web.app/order/fail`)
             }
         })
 
@@ -238,5 +238,5 @@ run().catch(console.dir);
 //////////////////////
 
 app.listen(port, () => {
-     (`hi hello ${port}`)
+    console.log(`hi hello ${port}`)
 })
