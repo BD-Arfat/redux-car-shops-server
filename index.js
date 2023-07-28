@@ -38,23 +38,27 @@ async function run() {
         const ordersCollection = client.db('carShops').collection('orders');
         const yourProductsCollection = client.db('carShops').collection('yourProducts');
 
+        // Products Post
         app.post('/products', async (req, res) => {
             const user = req.body;
             const result = await productCollection.insertOne(user);
             res.send(result);
         })
+        // Products get
         app.get('/products', async (req, res) => {
             const query = {};
             const cursor = productCollection.find(query);
             const users = await cursor.toArray();
             res.send(users)
         });
+        // produt get
         app.get('/product', async (req, res) => {
             const email = req.query.email;
             const query = { email: email };
             const result = await productCollection.find(query).toArray();
             res.send(result);
         });
+        // delete single product
         app.delete('/products/:id', async (req, res) => {
             const id = req.params.id;
             const query = { _id: new ObjectId(id) };
